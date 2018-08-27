@@ -22,5 +22,5 @@
   "recon": {:hex, :recon, "2.3.2", "4444c879be323b1b133eec5241cb84bd3821ea194c740d75617e106be4744318", [:rebar3], [], "hexpm"},
   "skogsra": {:hex, :skogsra, "0.2.2", "b8385f0cc8da0683bfaa5aab70a48001b7635edca68f9a3cc700b2f9ab7209ca", [:mix], [], "hexpm"},
   "uuid": {:hex, :uuid, "1.1.8", "e22fc04499de0de3ed1116b770c7737779f226ceefa0badb3592e64d5cfb4eb9", [:mix], [], "hexpm"},
-  "yggdrasil": {:git, "https://github.com/gmtprime/yggdrasil.git", "f7450adb8bef005ba6d6ea28b0d3191de28f1e4b", [branch: "4.0.0"]},
+  "yggdrasil": {:git, "https://github.com/gmtprime/yggdrasil.git", "1ad0871786d8d56b63cc2337d096f002593269d0", [branch: "4.0.0"]},
 }
