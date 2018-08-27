@@ -108,7 +108,7 @@ end
 ## Running the tests
 
 A `docker-compose.yml` file is provided with the project. If  you don't have a
-Redis database, but you do have Docker installed, then just do:
+PostgreSQL database, but you do have Docker installed, then just do:
 
 ```
 $ docker-compose up --build
