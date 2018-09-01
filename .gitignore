@@ -27,3 +27,6 @@ yggdrasil_postgres-*.tar
 
 # Ignore hidden files
 .*
+
+# Ignore ttyrecords
+ttyrecord

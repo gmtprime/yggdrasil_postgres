@@ -1,6 +1,8 @@
 defmodule Yggdrasil.Postgres.Application do
   @moduledoc """
-  Module that defines Yggdrasil with Postgres support.
+  [![Build Status](https://travis-ci.org/gmtprime/yggdrasil_postgres.svg?branch=master)](https://travis-ci.org/gmtprime/yggdrasil_postgres) [![Hex pm](http://img.shields.io/hexpm/v/yggdrasil_postgres.svg?style=flat)](https://hex.pm/packages/yggdrasil_postgres) [![hex.pm downloads](https://img.shields.io/hexpm/dt/yggdrasil_postgres.svg?style=flat)](https://hex.pm/packages/yggdrasil_postgres)
+
+  This project is a PostgreSQL adapter for `Yggdrasil` publisher/subscriber.
 
   ![demo](https://raw.githubusercontent.com/gmtprime/yggdrasil_postgres/master/images/demo.gif)
 
@@ -41,7 +43,8 @@ defmodule Yggdrasil.Postgres.Application do
     it defaults to `:default`, but `:json` can also be used.
     * Any `backend` can be used (by default is `:default`).
 
-  The following is a valid channel for both publishers and subscribers:
+  The following is an example of a valid channel for both publishers and
+  subscribers:
 
   ```elixir
   %Yggdrasil.Channel{
@@ -91,6 +94,17 @@ defmodule Yggdrasil.Postgres.Application do
   where `<NAMESPACE>` is the snakecase of the namespace chosen e.g. for the
   namespace `PostgresTwo`, you would use `POSTGRES_TWO` as namespace in the OS
   environment variable.
+
+  ## Installation
+
+  Using this PostgreSQL adapter with `Yggdrasil` is a matter of adding the
+  available hex package to your `mix.exs` file e.g:
+
+  ```elixir
+  def deps do
+    [{:yggdrasil_postgres, "~> 4.0"}]
+  end
+  ```
   """
   use Application
 

@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/gmtprime/yggdrasil_postgres.svg?branch=master)](https://travis-ci.org/gmtprime/yggdrasil_postgres) [![Hex pm](http://img.shields.io/hexpm/v/yggdrasil_postgres.svg?style=flat)](https://hex.pm/packages/yggdrasil_postgres) [![hex.pm downloads](https://img.shields.io/hexpm/dt/yggdrasil_postgres.svg?style=flat)](https://hex.pm/packages/yggdrasil_postgres)
 
-This project is a PostgreSQL adapter for `Yggdrasil` pub/sub.
+This project is a PostgreSQL adapter for `Yggdrasil` publisher/subscriber.
 
 ![demo](https://raw.githubusercontent.com/gmtprime/yggdrasil_postgres/master/images/demo.gif)
 
@@ -43,7 +43,8 @@ The PostgreSQL adapter has the following rules:
   it defaults to `:default`, but `:json` can also be used.
   * Any `backend` can be used (by default is `:default`).
 
-The following is a valid channel for both publishers and subscribers:
+The following is an example of a valid channel for both publishers and
+subscribers:
 
 ```elixir
 %Yggdrasil.Channel{
