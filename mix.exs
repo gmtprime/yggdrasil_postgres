@@ -26,7 +26,7 @@ defmodule YggdrasilPostgres.MixProject do
 
   defp deps do
     [
-      {:yggdrasil, git: "https://github.com/gmtprime/yggdrasil.git", branch: "4.0.0"},
+      {:yggdrasil, "~> 4.0.0"},
       {:postgrex, "~> 0.13"},
       {:connection, "~> 1.0"},
       {:uuid, "~> 1.1", only: [:dev, :test]},
