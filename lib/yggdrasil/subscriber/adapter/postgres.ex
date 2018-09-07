@@ -44,21 +44,21 @@ defmodule Yggdrasil.Subscriber.Adapter.Postgres do
 
   alias Yggdrasil.Channel
   alias Yggdrasil.Subscriber.Publisher
-  alias Yggdrasil.Backend
+  alias Yggdrasil.Subscriber.Manager
   alias Yggdrasil.Settings, as: GlobalSettings
   alias Yggdrasil.Settings.Postgres, as: Settings
 
-  defstruct [:publisher, :channel, :conn, :ref, :retries]
+  defstruct [:channel, :conn, :ref, :retries]
   alias __MODULE__, as: State
 
   ############
   # Client API
 
   @impl true
-  def start_link(channel, publisher, options \\ [])
+  def start_link(channel, options \\ [])
 
-  def start_link(%Channel{} = channel, publisher, options) do
-    arguments = %{publisher: publisher, channel: channel}
+  def start_link(%Channel{} = channel, options) do
+    arguments = %{channel: channel}
     Connection.start_link(__MODULE__, arguments, options)
   end
 
@@ -113,7 +113,7 @@ defmodule Yggdrasil.Subscriber.Adapter.Postgres do
       "#{__MODULE__} connected to Postgres #{inspect channel}"
     end)
     new_state = %State{state | conn: conn, ref: ref, retries: 0}
-    Backend.connected(channel)
+    Manager.connected(channel)
     {:ok, new_state}
   end
 
@@ -122,11 +122,11 @@ defmodule Yggdrasil.Subscriber.Adapter.Postgres do
     disconnected(state)
   end
   def disconnect(:down, %State{channel: channel} = state) do
-    Backend.disconnected(channel)
+    Manager.disconnected(channel)
     disconnect(:down, %State{state | conn: nil, ref: nil})
   end
   def disconnect(:exit, %State{channel: channel} = state) do
-    Backend.disconnected(channel)
+    Manager.disconnected(channel)
     disconnect(:exit, %State{state | conn: nil, ref: nil})
   end
 
@@ -141,10 +141,10 @@ defmodule Yggdrasil.Subscriber.Adapter.Postgres do
 
   @impl true
   def handle_info(
-    {:notification, _, _, channel, message},
-    %State{publisher: publisher} = state
+    {:notification, _, _, _, message},
+    %State{channel: channel} = state
   ) do
-    Publisher.notify(publisher, channel, message)
+    Publisher.notify(channel, message)
     {:noreply, state}
   end
   def handle_info({:DOWN, _, :process, _, _}, %State{} = state) do
@@ -167,7 +167,7 @@ defmodule Yggdrasil.Subscriber.Adapter.Postgres do
   ) do
     Postgrex.Notifications.unlisten(conn, ref)
     GenServer.stop(conn)
-    Backend.disconnected(channel)
+    Manager.disconnected(channel)
     terminate(reason, %State{state | conn: nil, ref: nil})
   end
 

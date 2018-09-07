@@ -22,5 +22,5 @@
   "recon": {:hex, :recon, "2.3.2", "4444c879be323b1b133eec5241cb84bd3821ea194c740d75617e106be4744318", [:rebar3], [], "hexpm"},
   "skogsra": {:hex, :skogsra, "0.2.2", "b8385f0cc8da0683bfaa5aab70a48001b7635edca68f9a3cc700b2f9ab7209ca", [:mix], [], "hexpm"},
   "uuid": {:hex, :uuid, "1.1.8", "e22fc04499de0de3ed1116b770c7737779f226ceefa0badb3592e64d5cfb4eb9", [:mix], [], "hexpm"},
-  "yggdrasil": {:hex, :yggdrasil, "4.0.0", "47d04bf0d460b847597935616d2db6455d99cefcc6ea38494a842260b2dd1114", [:mix], [{:exreg, "~> 0.0.3", [hex: :exreg, repo: "hexpm", optional: false]}, {:jason, "~> 1.0", [hex: :jason, repo: "hexpm", optional: false]}, {:phoenix_pubsub, "~> 1.0", [hex: :phoenix_pubsub, repo: "hexpm", optional: false]}, {:poolboy, "~> 1.5", [hex: :poolboy, repo: "hexpm", optional: false]}, {:skogsra, "~> 0.2", [hex: :skogsra, repo: "hexpm", optional: false]}], "hexpm"},
+  "yggdrasil": {:hex, :yggdrasil, "4.1.0", "c3e46ac8e739359893810c27a6044d2eb668673b098e66c4ff97bf5a76666af6", [:mix], [{:exreg, "~> 0.0.3", [hex: :exreg, repo: "hexpm", optional: false]}, {:jason, "~> 1.0", [hex: :jason, repo: "hexpm", optional: false]}, {:phoenix_pubsub, "~> 1.0", [hex: :phoenix_pubsub, repo: "hexpm", optional: false]}, {:poolboy, "~> 1.5", [hex: :poolboy, repo: "hexpm", optional: false]}, {:skogsra, "~> 0.2", [hex: :skogsra, repo: "hexpm", optional: false]}], "hexpm"},
 }

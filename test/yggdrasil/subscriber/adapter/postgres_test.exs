@@ -5,28 +5,36 @@ defmodule Yggdrasil.Subscriber.Adapter.PostgresTest do
   alias Yggdrasil.Registry
   alias Yggdrasil.Backend
   alias Yggdrasil.Subscriber.Publisher
+  alias Yggdrasil.Subscriber.Manager
   alias Yggdrasil.Subscriber.Adapter
   alias Yggdrasil.Subscriber.Adapter.Postgres
+  alias Yggdrasil.Settings
+
+  @registry Settings.yggdrasil_process_registry()
 
   test "distribute message" do
     name = "channel#{UUID.uuid4() |> :erlang.phash2() |> to_string()}"
     channel = %Channel{name: name, adapter: :postgres, namespace: PostgresTest}
     {:ok, channel} = Registry.get_full_channel(channel)
-
     Backend.subscribe(channel)
-    assert {:ok, publisher} = Publisher.start_link(channel)
+    publisher = {:via, @registry, {Publisher, channel}}
+    manager = {:via, @registry, {Manager, channel}}
 
-    assert {:ok, adapter} = Adapter.start_link(channel, publisher)
-    assert_receive {:Y_CONNECTED, _}, 500
+    assert {:ok, _} = Publisher.start_link(channel, name: publisher)
+    assert {:ok, _} = Manager.start_link(channel, name: manager)
+    :ok = Manager.add(channel, self())
+
+    assert {:ok, adapter} = Adapter.start_link(channel)
+    assert_receive {:Y_CONNECTED, ^channel}, 500
 
     options = Postgres.postgres_options(channel)
     {:ok, conn} = Postgrex.start_link(options)
     {:ok, _} = Postgrex.query(conn, "NOTIFY #{name}, 'message'", [])
     GenServer.stop(conn)
 
-    assert_receive {:Y_EVENT, _, "message"}, 500
+    assert_receive {:Y_EVENT, ^channel, "message"}, 500
 
     assert :ok = Adapter.stop(adapter)
-    assert_receive {:Y_DISCONNECTED, _}, 500
+    assert_receive {:Y_DISCONNECTED, ^channel}, 500
   end
 end
