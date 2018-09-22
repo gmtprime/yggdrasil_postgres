@@ -4,8 +4,6 @@ defmodule Yggdrasil.Postgres.Application do
 
   This project is a PostgreSQL adapter for `Yggdrasil` publisher/subscriber.
 
-  ![demo](https://raw.githubusercontent.com/gmtprime/yggdrasil_postgres/master/images/demo.gif)
-
   ## Small example
 
   The following example uses PostgreSQL adapter to distribute messages:
@@ -14,7 +12,7 @@ defmodule Yggdrasil.Postgres.Application do
   iex(1)> channel = %Yggdrasil.Channel{name: "some_channel", adapter: :postgres}
   iex(2)> Yggdrasil.subscribe(channel)
   iex(3)> flush()
-  {:Y_CONNECTED, %YggdrasilChannel{(...)}}
+  {:Y_CONNECTED, %Yggdrasil.Channel{(...)}}
   ```
 
   and to publish a message for the subscribers:

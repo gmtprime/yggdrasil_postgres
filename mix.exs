@@ -1,7 +1,7 @@
 defmodule YggdrasilPostgres.MixProject do
   use Mix.Project
 
-  @version "4.1.0"
+  @version "4.1.1"
   @root "https://github.com/gmtprime/yggdrasil_postgres"
 
   def project do
