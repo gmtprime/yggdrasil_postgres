@@ -1,7 +1,7 @@
 defmodule YggdrasilPostgres.MixProject do
   use Mix.Project
 
-  @version "4.1.1"
+  @version "4.1.2"
   @root "https://github.com/gmtprime/yggdrasil_postgres"
 
   def project do
@@ -34,7 +34,7 @@ defmodule YggdrasilPostgres.MixProject do
       {:connection, "~> 1.0"},
       {:uuid, "~> 1.1", only: [:dev, :test]},
       {:ex_doc, "~> 0.18.4", only: :dev},
-      {:credo, "~> 0.10", only: :dev}
+      {:credo, "~> 1.0", only: :dev}
     ]
   end
 
@@ -68,10 +68,10 @@ defmodule YggdrasilPostgres.MixProject do
 
   defp groups_for_modules do
     [
-      "Application": [
+      Application: [
         Yggdrasil.Postgres.Application
       ],
-      "Adapter": [
+      Adapter: [
         Yggdrasil.Settings.Postgres,
         Yggdrasil.Adapter.Postgres
       ],
@@ -80,7 +80,7 @@ defmodule YggdrasilPostgres.MixProject do
       ],
       "Publisher adapter": [
         Yggdrasil.Publisher.Adapter.Postgres
-      ],
+      ]
     ]
   end
 end

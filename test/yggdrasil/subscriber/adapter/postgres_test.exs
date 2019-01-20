@@ -10,7 +10,7 @@ defmodule Yggdrasil.Subscriber.Adapter.PostgresTest do
   alias Yggdrasil.Subscriber.Adapter.Postgres
   alias Yggdrasil.Settings
 
-  @registry Settings.yggdrasil_process_registry()
+  @registry Settings.yggdrasil_process_registry!()
 
   test "distribute message" do
     name = "channel#{UUID.uuid4() |> :erlang.phash2() |> to_string()}"

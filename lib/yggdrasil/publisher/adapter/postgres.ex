@@ -79,9 +79,9 @@ defmodule Yggdrasil.Publisher.Adapter.Postgres do
   unused `options`.
   """
   @spec publish(GenServer.server(), Channel.t(), term()) ::
-    :ok | {:error, term()}
+          :ok | {:error, term()}
   @spec publish(GenServer.server(), Channel.t(), term(), Keyword.t()) ::
-    :ok | {:error, term()}
+          :ok | {:error, term()}
   @impl true
   def publish(publisher, channel, message, options \\ [])
 
@@ -110,6 +110,7 @@ defmodule Yggdrasil.Publisher.Adapter.Postgres do
   def disconnect(_info, %State{conn: nil} = state) do
     {:backoff, 5000, state}
   end
+
   def disconnect(info, %State{conn: conn} = state) do
     GenServer.stop(conn)
     disconnect(info, %State{state | conn: nil})
@@ -117,23 +118,26 @@ defmodule Yggdrasil.Publisher.Adapter.Postgres do
 
   @impl true
   def handle_call(
-    {:publish, _, _},
-    _from,
-    %State{conn: nil} = state
-  ) do
+        {:publish, _, _},
+        _from,
+        %State{conn: nil} = state
+      ) do
     {:reply, {:error, "Disconnected"}, state}
   end
+
   def handle_call(
-    {:publish, %Channel{name: name} = channel, message},
-    _from,
-    %State{conn: conn} = state
-  ) do
+        {:publish, %Channel{name: name} = channel, message},
+        _from,
+        %State{conn: conn} = state
+      ) do
     result =
       with {:ok, encoded} <- Transformer.encode(channel, message),
            {:ok, _} <- Postgrex.query(conn, "NOTIFY #{name}, '#{encoded}'", []),
            do: :ok
+
     {:reply, result, state}
   end
+
   def handle_call(_msg, _from, %State{} = state) do
     {:noreply, state}
   end
@@ -143,6 +147,7 @@ defmodule Yggdrasil.Publisher.Adapter.Postgres do
     new_state = %State{state | conn: nil}
     {:disconnect, :down, new_state}
   end
+
   def handle_info({:EXIT, _, _}, %State{} = state) do
     new_state = %State{state | conn: nil}
     {:disconnect, :exit, new_state}
@@ -152,6 +157,7 @@ defmodule Yggdrasil.Publisher.Adapter.Postgres do
   def terminate(reason, %State{conn: nil} = state) do
     terminated(reason, state)
   end
+
   def terminate(reason, %State{conn: conn} = state) do
     GenServer.stop(conn)
     terminate(reason, %State{state | conn: nil})
@@ -159,9 +165,11 @@ defmodule Yggdrasil.Publisher.Adapter.Postgres do
 
   defp terminated(reason, %State{} = _state) do
     metadata = [error: reason]
+
     Logger.debug(fn ->
-      "Terminated Postgres connection #{inspect metadata}"
+      "Terminated Postgres connection #{inspect(metadata)}"
     end)
+
     :ok
   end
 end
