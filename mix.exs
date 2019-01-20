@@ -44,7 +44,7 @@ defmodule YggdrasilPostgres.MixProject do
   defp package do
     [
       description: "PostgreSQL adapter for Yggdrasil (pub/sub)",
-      files: ["lib", "mix.exs", "images", "README.md"],
+      files: ["lib", "mix.exs", "README.md"],
       maintainers: ["Alexander de Sousa"],
       licenses: ["MIT"],
       links: %{
