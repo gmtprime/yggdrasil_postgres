@@ -45,7 +45,6 @@ defmodule Yggdrasil.Subscriber.Adapter.Postgres do
   alias Yggdrasil.Channel
   alias Yggdrasil.Subscriber.Publisher
   alias Yggdrasil.Subscriber.Manager
-  alias Yggdrasil.Settings, as: GlobalSettings
   alias Yggdrasil.Settings.Postgres, as: Settings
 
   defstruct [:channel, :conn, :ref, :retries]
