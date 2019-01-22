@@ -2,8 +2,8 @@ defmodule Yggdrasil.Publisher.Adapter.PostgresTest do
   use ExUnit.Case, async: true
 
   alias Yggdrasil.Channel
-  alias Yggdrasil.Registry
   alias Yggdrasil.Publisher.Adapter
+  alias Yggdrasil.Registry
 
   test "publish" do
     name = "t#{UUID.uuid4() |> :erlang.phash2() |> to_string()}"

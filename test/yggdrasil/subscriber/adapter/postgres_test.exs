@@ -1,14 +1,14 @@
 defmodule Yggdrasil.Subscriber.Adapter.PostgresTest do
   use ExUnit.Case, async: true
 
+  alias Yggdrasil.Backend
   alias Yggdrasil.Channel
   alias Yggdrasil.Registry
-  alias Yggdrasil.Backend
-  alias Yggdrasil.Subscriber.Publisher
-  alias Yggdrasil.Subscriber.Manager
+  alias Yggdrasil.Settings
   alias Yggdrasil.Subscriber.Adapter
   alias Yggdrasil.Subscriber.Adapter.Postgres
-  alias Yggdrasil.Settings
+  alias Yggdrasil.Subscriber.Manager
+  alias Yggdrasil.Subscriber.Publisher
 
   @registry Settings.yggdrasil_process_registry!()
 

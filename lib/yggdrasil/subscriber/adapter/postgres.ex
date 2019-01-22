@@ -43,9 +43,9 @@ defmodule Yggdrasil.Subscriber.Adapter.Postgres do
   require Logger
 
   alias Yggdrasil.Channel
-  alias Yggdrasil.Subscriber.Publisher
-  alias Yggdrasil.Subscriber.Manager
   alias Yggdrasil.Settings.Postgres, as: Settings
+  alias Yggdrasil.Subscriber.Manager
+  alias Yggdrasil.Subscriber.Publisher
 
   defstruct [:channel, :conn, :ref, :retries]
   alias __MODULE__, as: State

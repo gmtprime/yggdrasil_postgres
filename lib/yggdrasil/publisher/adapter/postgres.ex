@@ -42,8 +42,8 @@ defmodule Yggdrasil.Publisher.Adapter.Postgres do
   require Logger
 
   alias Yggdrasil.Channel
-  alias Yggdrasil.Transformer
   alias Yggdrasil.Subscriber.Adapter.Postgres
+  alias Yggdrasil.Transformer
 
   defstruct [:conn, :namespace]
   alias __MODULE__, as: State
