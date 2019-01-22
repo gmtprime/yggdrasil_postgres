@@ -1,7 +1,7 @@
 defmodule YggdrasilPostgres.MixProject do
   use Mix.Project
 
-  @version "4.1.2"
+  @version "4.1.3"
   @root "https://github.com/gmtprime/yggdrasil_postgres"
 
   def project do
@@ -44,7 +44,7 @@ defmodule YggdrasilPostgres.MixProject do
   defp package do
     [
       description: "PostgreSQL adapter for Yggdrasil (pub/sub)",
-      files: ["lib", "mix.exs", "README.md"],
+      files: ["lib", "mix.exs", "README.md", ".formatter.exs"],
       maintainers: ["Alexander de Sousa"],
       licenses: ["MIT"],
       links: %{
