@@ -205,10 +205,10 @@ defmodule Yggdrasil.Subscriber.Adapter.Postgres do
         %State{channel: %Channel{namespace: namespace}, retries: retries} =
           state
       ) do
-    max_retries = Settings.yggdrasil_postgres_max_retries!(namespace)
+    max_retries = Settings.max_retries!(namespace)
     new_retries = if retries == max_retries, do: retries, else: retries + 1
 
-    slot_size = Settings.yggdrasil_postgres_slot_size!(namespace)
+    slot_size = Settings.slot_size!(namespace)
     # ms
     new_backoff = (2 <<< new_retries) * Enum.random(1..slot_size)
 
@@ -220,11 +220,11 @@ defmodule Yggdrasil.Subscriber.Adapter.Postgres do
   @doc false
   def postgres_options(%Channel{namespace: namespace}) do
     [
-      hostname: Settings.yggdrasil_postgres_hostname!(namespace),
-      port: Settings.yggdrasil_postgres_port!(namespace),
-      username: Settings.yggdrasil_postgres_username!(namespace),
-      password: Settings.yggdrasil_postgres_password!(namespace),
-      database: Settings.yggdrasil_postgres_database!(namespace)
+      hostname: Settings.hostname!(namespace),
+      port: Settings.port!(namespace),
+      username: Settings.username!(namespace),
+      password: Settings.password!(namespace),
+      database: Settings.database!(namespace)
     ]
   end
 end
