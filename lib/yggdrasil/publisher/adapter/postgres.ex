@@ -43,7 +43,6 @@ defmodule Yggdrasil.Publisher.Adapter.Postgres do
 
   alias Yggdrasil.Channel
   alias Yggdrasil.Transformer
-  alias Yggdrasil.Subscriber.Adapter.Postgres
 
   defstruct [:conn, :namespace]
   alias __MODULE__, as: State
@@ -101,7 +100,7 @@ defmodule Yggdrasil.Publisher.Adapter.Postgres do
 
   @impl true
   def connect(_info, %State{namespace: namespace} = state) do
-    options = Postgres.postgres_options(%Channel{namespace: namespace})
+    options = Yggdrasil.Postgres.Connection.postgres_options(%Yggdrasil.Postgres.Connection{namespace: namespace})
     {:ok, conn} = Postgrex.start_link(options)
     {:ok, %State{state | conn: conn}}
   end
