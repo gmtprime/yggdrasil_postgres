@@ -30,12 +30,12 @@ defmodule Yggdrasil.Postgres.Connection do
 
   @typedoc false
   @type t :: %State{
-    namespace: namespace :: namespace(),
-    tag: tag :: tag(),
-    conn: connection :: pid(),
-    retries: retries :: non_neg_integer(),
-    backoff: backoff :: non_neg_integer()
-  }
+          namespace: namespace :: namespace(),
+          tag: tag :: tag(),
+          conn: connection :: pid(),
+          retries: retries :: non_neg_integer(),
+          backoff: backoff :: non_neg_integer()
+        }
 
   ############
   # Public API
@@ -244,14 +244,18 @@ defmodule Yggdrasil.Postgres.Connection do
 
   defp connected(%State{namespace: nil} = state) do
     send_notification(state, :connected)
-    Logger.debug("#{__MODULE__} connected to PostgreSQL")
+
+    Logger.debug(fn ->
+      "#{__MODULE__} connected to PostgreSQL"
+    end)
   end
 
   defp connected(%State{namespace: namespace} = state) do
     send_notification(state, :connected)
-    Logger.debug(
+
+    Logger.debug(fn ->
       "#{__MODULE__} connected to PostgreSQL using namespace #{namespace}"
-    )
+    end)
   end
 
   ##
@@ -298,31 +302,35 @@ defmodule Yggdrasil.Postgres.Connection do
 
   defp disconnected(:normal, %State{namespace: nil} = state) do
     send_notification(state, :disconnected)
-    Logger.debug("#{__MODULE__} disconnected from PostgreSQL")
+
+    Logger.debug(fn ->
+      "#{__MODULE__} disconnected from PostgreSQL"
+    end)
   end
 
   defp disconnected(:normal, %State{namespace: namespace} = state) do
     send_notification(state, :disconnected)
 
-    Logger.debug(
+    Logger.debug(fn ->
       "#{__MODULE__} disconnected from PostgreSQL using namespace #{namespace}"
-    )
+    end)
   end
 
   defp disconnected(reason, %State{namespace: nil} = state) do
     send_notification(state, :disconnected)
-    Logger.warn(
+
+    Logger.warn(fn ->
       "#{__MODULE__} disconnected from PostgreSQL due to " <>
         "#{inspect(reason)}"
-    )
+    end)
   end
 
   defp disconnected(reason, %State{namespace: namespace} = state) do
     send_notification(state, :disconnected)
 
-    Logger.warn(
+    Logger.warn(fn ->
       "#{__MODULE__} disconnected from PostgreSQL " <>
         "using namespace #{namespace} due to #{inspect(reason)}"
-    )
+    end)
   end
 end

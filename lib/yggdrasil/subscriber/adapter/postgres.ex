@@ -52,10 +52,10 @@ defmodule Yggdrasil.Subscriber.Adapter.Postgres do
 
   @typedoc false
   @type t :: %State{
-    channel: channel :: Channel.t(),
-    conn: conn :: pid(),
-    ref: ref :: reference()
-  }
+          channel: channel :: Channel.t(),
+          conn: conn :: pid(),
+          ref: ref :: reference()
+        }
 
   ############
   # Client API
@@ -77,7 +77,10 @@ defmodule Yggdrasil.Subscriber.Adapter.Postgres do
   end
 
   @impl GenServer
-  def handle_continue(:init, %State{channel: %Channel{namespace: namespace}} = state) do
+  def handle_continue(
+        :init,
+        %State{channel: %Channel{namespace: namespace}} = state
+      ) do
     Connection.subscribe(:subscriber, namespace)
     {:noreply, state}
   end
@@ -208,38 +211,43 @@ defmodule Yggdrasil.Subscriber.Adapter.Postgres do
 
   # Shows connection message.
   defp connected(%State{channel: channel}) do
-    Logger.info("#{__MODULE__} subscribed to #{inspect(channel)}")
+    Logger.info(fn ->
+      "#{__MODULE__} subscribed to #{inspect(channel)}"
+    end)
+
     :ok
   end
 
   # Shows error when connecting.
   defp backing_off(error, %State{channel: channel}) do
-    Logger.warn(
+    Logger.warn(fn ->
       "#{__MODULE__} cannot subscribe to #{inspect(channel)}" <>
         " due to #{inspect(error)}"
-    )
+    end)
 
     :ok
   end
 
   # Shows disconnection message.
   defp disconnected(error, %State{channel: %Channel{} = channel}) do
-    Logger.warn(
+    Logger.warn(fn ->
       "#{__MODULE__} unsubscribed from #{inspect(channel)}" <>
         " due to #{inspect(error)}"
-    )
+    end)
 
     :ok
   end
 
   @doc false
   defp terminated(:normal, %State{channel: %Channel{} = channel}) do
-    Logger.debug("#{__MODULE__} stopped for #{inspect(channel)}")
+    Logger.debug(fn ->
+      "#{__MODULE__} stopped for #{inspect(channel)}"
+    end)
   end
 
   defp terminated(reason, %State{channel: %Channel{} = channel}) do
-    Logger.warn(
+    Logger.warn(fn ->
       "#{__MODULE__} stopped for #{inspect(channel)} due to #{inspect(reason)}"
-    )
+    end)
   end
 end
