@@ -6,42 +6,38 @@ defmodule Yggdrasil.Subscriber.Adapter.Postgres do
   Subscription to channel:
 
   ```
-  iex(2)> channel = %Yggdrasil.Channel{
-  iex(2)>   name: "my_channel",
-  iex(2)>   adapter: :postgres
-  iex(2)> }
-  iex(3)> Yggdrasil.subscribe(channel)
+  iex(1)> channel = [name: "pg_channel", adapter: :postgres]
+  iex(2)> Yggdrasil.subscribe(channel)
   :ok
-  iex(4)> flush()
-  {:Y_CONNECTED, %Yggdrasil.Channel{name: "my_channel", (...)}}
+  iex(3)> flush()
+  {:Y_CONNECTED, %Yggdrasil.Channel{name: "pg_channel", (...)}}
   ```
 
   Publishing message:
 
   ```
-  iex(5)> Yggdrasil.publish(channel, "foo")
+  iex(4)> Yggdrasil.publish(channel, "foo")
   :ok
   ```
 
   Subscriber receiving message:
 
   ```
-  iex(6)> flush()
-  {:Y_EVENT, %Yggdrasil.Channel{name: "my_channel", (...)}, "foo"}
+  iex(5)> flush()
+  {:Y_EVENT, %Yggdrasil.Channel{name: "pg_channel", (...)}, "foo"}
   ```
 
   The subscriber can also unsubscribe from the channel:
 
   ```
-  iex(7)> Yggdrasil.unsubscribe(channel)
+  iex(6)> Yggdrasil.unsubscribe(channel)
   :ok
-  iex(8)> flush()
-  {:Y_DISCONNECTED, %Yggdrasil.Channel{name: "my_channel", (...)}}
+  iex(7)> flush()
+  {:Y_DISCONNECTED, %Yggdrasil.Channel{name: "pg_channel", (...)}}
   ```
   """
-  use Yggdrasil.Subscriber.Adapter
-  use Bitwise
   use GenServer
+  use Yggdrasil.Subscriber.Adapter
 
   require Logger
 
@@ -64,7 +60,7 @@ defmodule Yggdrasil.Subscriber.Adapter.Postgres do
   ############
   # Client API
 
-  @impl true
+  @impl Yggdrasil.Subscriber.Adapter
   def start_link(channel, options \\ [])
 
   def start_link(%Channel{} = channel, options) do
