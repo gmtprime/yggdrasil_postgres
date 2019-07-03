@@ -77,6 +77,11 @@ defmodule YggdrasilPostgres.MixProject do
       ],
       "Publisher adapter": [
         Yggdrasil.Publisher.Adapter.Postgres
+      ],
+      "PostgreSQL Connection Handling": [
+        Yggdrasil.Postgres.Connection,
+        Yggdrasil.Postgres.Connection.Pool,
+        Yggdrasil.Postgres.Connection.Generator
       ]
     ]
   end
