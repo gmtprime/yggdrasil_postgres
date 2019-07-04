@@ -1,69 +1,127 @@
-# PostgreSQL adapter for Yggdrasil
+# Yggdrasil for PostgreSQL
 
 [![Build Status](https://travis-ci.org/gmtprime/yggdrasil_postgres.svg?branch=master)](https://travis-ci.org/gmtprime/yggdrasil_postgres) [![Hex pm](http://img.shields.io/hexpm/v/yggdrasil_postgres.svg?style=flat)](https://hex.pm/packages/yggdrasil_postgres) [![hex.pm downloads](https://img.shields.io/hexpm/dt/yggdrasil_postgres.svg?style=flat)](https://hex.pm/packages/yggdrasil_postgres)
 
-This project is a PostgreSQL adapter for `Yggdrasil` publisher/subscriber.
+`Yggdrasil` for PostgreSQL is a publisher/subscriber that:
+
+- It's easy to use and configure.
+- It's fault tolerant: recovers disconnected subscriptions.
+- It has reconnection support: configurable exponential backoff.
+- It has OS environment variable configuration support (useful for
+[Distillery](https://github.com/bitwalker/distillery) releases).
 
 ## Small example
 
-The following example uses PostgreSQL adapter to distribute messages:
+The following example uses PostgreSQL adapter to distribute messages e.g:
+
+Given the following channel:
 
 ```elixir
-iex(1)> channel = %Yggdrasil.Channel{name: "some_channel", adapter: :postgres}
-iex(2)> Yggdrasil.subscribe(channel)
-iex(3)> flush()
-{:Y_CONNECTED, %Yggdrasil.Channel{(...)}}
+iex> channel = [name: "pg_channel", adapter: :postgres]
 ```
 
-and to publish a message for the subscribers:
+You can:
+
+* Subscribe to it:
+
+  ```elixir
+  iex> Yggdrasil.subscribe(channel)
+  iex> flush()
+  {:Y_CONNECTED, %Yggdrasil.Channel{...}}
+  ```
+
+* Publish messages to it:
+
+  ```elixir
+  iex> Yggdrasil.publish(channel, "message")
+  iex> flush()
+  {:Y_EVENT, %Yggdrasil.Channel{...}, "message"}
+  ```
+
+* Unsubscribe from it:
+
+  ```elixir
+  iex> Yggdrasil.unsubscribe(channel)
+  iex> flush()
+  {:Y_DISCONNECTED, %Yggdrasil.Channel{...}}
+  ```
+
+And additionally, you can use `Yggdrasil` behaviour to build a subscriber:
 
 ```elixir
-iex(4)> Yggdrasil.publish(channel, "message")
-iex(5)> flush()
-{:Y_EVENT, %Yggdrasil.Channel{(...)}, "message"}
+defmodule Subscriber do
+  use Yggdrasil
+
+  def start_link do
+    channel = [name: "pg_channel", adapter: :postgres]
+    Yggdrasil.start_link(__MODULE__, [channel])
+  end
+
+  @impl Yggdrasil
+  def handle_event(_channel, message, _) do
+    IO.inspect message
+    {:ok, nil}
+  end
+end
 ```
 
-When the subscriber wants to stop receiving messages, then it can unsubscribe
-from the channel:
-
-```elixir
-iex(6)> Yggdrasil.unsubscribe(channel)
-iex(7)> flush()
-{:Y_DISCONNECTED, %Yggdrasil.Channel{(...)}}
-```
+The previous `Subscriber` will print every message that comes from the
+PostgreSQL channel `pg_channel`.
 
 ## PostgreSQL adapter
 
 The PostgreSQL adapter has the following rules:
-  * The `adapter` name is identified by the atom `:postgres`.
-  * The channel `name` must be a string.
-  * The `transformer` must encode to a string. From the `transformer`s provided
+
+* The `adapter` name is identified by the atom `:postgres`.
+* The channel `name` must be a string.
+* The `transformer` must encode to a string. From the `transformer`s provided,
   it defaults to `:default`, but `:json` can also be used.
-  * Any `backend` can be used (by default is `:default`).
+* Any `backend` can be used (by default is `:default`).
 
 The following is an example of a valid channel for both publishers and
 subscribers:
 
 ```elixir
 %Yggdrasil.Channel{
-  name: "postgres_channel_name",
+  name: "pg_channel",
   adapter: :postgres,
   transformer: :json
 }
 ```
 
-It will expect valid JSONs from PostgreSQL and it will write valid JSONs in
-PostgreSQL.
+The previous channel expects to:
 
-## PostgreSQL configuration
+- Subscribe to or publish to the channel `pg_channel`.
+- The adapter is `:postgres`, so it will connect to PostgreSQL using the
+  appropriate adapter.
+- The transformer expects valid JSONs when decoding (consuming from a
+  subscription) and `map()` or `keyword()` when encoding (publishing).
 
-Uses the list of options for `Postgrex`, but the more relevant optuons are
-shown below:
-  * `hostname` - PostgreSQL hostname (defaults to `"localhost"`).
-  * `port` - PortgreSQL port (defaults to `5432`).
-  * `username` - PostgreSQL username (defaults to `"postgres"`).
-  * `password` - PostgreSQL password (defaults to `"postgres"`).
-  * `database` - PostgreSQL database (defaults to `"postgres"`).
+> Note: Though the struct `Yggdrasil.Channel` is used. `keyword()` and `map()`
+> are also accepted as channels as long as the contain the required keys.
+
+
+## RabbitMQ configuration
+
+This adapter supports the following list of options:
+
+Option                   | Default       | Description
+:----------------------- | :------------ | :----------
+`hostname`               | `"localhost"` | PostgreSQL hostname.
+`port`                   | `5432`        | PostgreSQL  port.
+`username`               | `"postgres"`  | PostgreSQL username.
+`password`               | `"postgres"`  | PostgreSQL password.
+`database`               | `"postgres"`  | PostgreSQL database.
+`max_retries`            | `3`           | Amount of retries where the backoff time is incremented.
+`slot_size`              | `10`          | Max amount of slots when adapters are trying to reconnect.
+`subscriber_connections` | `1`           | Amount of subscriber connections.
+`publisher_connections`  | `1`           | Amount of publisher connections.
+
+> Note: Concurrency is handled by `Postgrex` subscriptions in order to reuse
+> database connections.
+
+> For more information about the available options check
+> `Yggdrasil.Settings.Postgres`.
 
 The following shows a configuration with and without namespace:
 
@@ -80,34 +138,32 @@ config :yggdrasil, PostgresOne,
   ]
 ```
 
-Also the options can be provided as OS environment variables. The available
-variables are:
+All the available options are also available as OS environment variables.
+It's possible to even separate them by namespace e.g:
 
-  * `YGGDRASIL_POSTGRES_HOSTNAME` or `<NAMESPACE>_YGGDRASIL_POSTGRES_HOSTNAME`.
-  * `YGGDRASIL_POSTGRES_USERNAME` or `<NAMESPACE>_YGGDRASIL_POSTGRES_USERNAME`.
-  * `YGGDRASIL_POSTGRES_PORT` or `<NAMESPACE>_YGGDRASIL_POSTGRES_PORT`.
-  * `YGGDRASIL_POSTGRES_PASSWORD` or `<NAMESPACE>_YGGDRASIL_POSTGRES_PASSWORD`.
-  * `YGGDRASIL_POSTGRES_DATABASE` or `<NAMESPACE>_YGGDRASIL_POSTGRES_DATABASE`.
+Given two namespaces, the default one and `Postgres.One`, it's possible to
+load the `hostname` from the OS environment variables as follows:
 
-where `<NAMESPACE>` is the snakecase of the namespace chosen e.g. for the
-namespace `PostgresTwo`, you would use `POSTGRES_TWO` as namespace in the OS
-environment variable.
+- `$YGGDRASIL_POSTGRES_HOSTNAME` for the default namespace.
+- `$POSTGRES_ONE_YGGDRASIL_POSTGRES_HOSTNAME` for `Postgres.One`.
+
+In general, the namespace will go before the name of the variable.
 
 ## Installation
 
-Using this PostgreSQL adapter with `Yggdrasil` is a matter of adding the
+Using this adapter with `Yggdrasil` is a matter of adding the
 available hex package to your `mix.exs` file e.g:
 
 ```elixir
 def deps do
-  [{:yggdrasil_postgres, "~> 4.1"}]
+  [{:yggdrasil_postgres, "~> 5.0"}]
 end
 ```
 
 ## Running the tests
 
 A `docker-compose.yml` file is provided with the project. If  you don't have a
-PostgreSQL database, but you do have Docker installed, then just do:
+PostgreSQL server, but you do have Docker installed, then you can run:
 
 ```
 $ docker-compose up --build
@@ -119,12 +175,6 @@ And in another shell run:
 $ mix deps.get
 $ mix test
 ```
-
-## Relevant projects used
-
-  * [`Postgrex`](https://github.com/elixir-ecto/postgrex): PostgreSQL pubsub.
-  * [`Connection`](https://github.com/fishcakez/connection): wrapper over
-  `GenServer` to handle connections.
 
 ## Author
 
