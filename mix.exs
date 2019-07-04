@@ -1,14 +1,15 @@
 defmodule YggdrasilPostgres.MixProject do
   use Mix.Project
 
-  @version "4.1.4"
+  @version "5.0.0"
   @root "https://github.com/gmtprime/yggdrasil_postgres"
 
   def project do
     [
+      name: "Yggdrasil for PostgreSQL",
       app: :yggdrasil_postgres,
       version: @version,
-      elixir: "~> 1.6",
+      elixir: "~> 1.8",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       package: package(),
@@ -29,11 +30,9 @@ defmodule YggdrasilPostgres.MixProject do
 
   defp deps do
     [
-      {:yggdrasil, "~> 4.1"},
-      {:postgrex, "~> 0.13"},
-      {:connection, "~> 1.0"},
-      {:uuid, "~> 1.1", only: [:dev, :test]},
-      {:ex_doc, "~> 0.18.4", only: :dev},
+      {:yggdrasil, "~> 5.0"},
+      {:postgrex, "~> 0.14"},
+      {:ex_doc, "~> 0.20", only: :dev},
       {:credo, "~> 1.0", only: :dev}
     ]
   end
@@ -60,18 +59,16 @@ defmodule YggdrasilPostgres.MixProject do
     [
       source_url: @root,
       source_ref: "v#{@version}",
-      main: Yggdrasil.Postgres.Application,
+      main: "readme",
       formatters: ["html"],
-      groups_for_modules: groups_for_modules()
+      groups_for_modules: groups_for_modules(),
+      extras: ["README.md"]
     ]
   end
 
   defp groups_for_modules do
     [
-      Application: [
-        Yggdrasil.Postgres.Application
-      ],
-      Adapter: [
+      "PostgreSQL Adapter Settings": [
         Yggdrasil.Settings.Postgres,
         Yggdrasil.Adapter.Postgres
       ],
@@ -80,6 +77,11 @@ defmodule YggdrasilPostgres.MixProject do
       ],
       "Publisher adapter": [
         Yggdrasil.Publisher.Adapter.Postgres
+      ],
+      "PostgreSQL Connection Handling": [
+        Yggdrasil.Postgres.Connection,
+        Yggdrasil.Postgres.Connection.Pool,
+        Yggdrasil.Postgres.Connection.Generator
       ]
     ]
   end
