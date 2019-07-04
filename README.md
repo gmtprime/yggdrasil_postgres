@@ -101,7 +101,7 @@ The previous channel expects to:
 > are also accepted as channels as long as the contain the required keys.
 
 
-## RabbitMQ configuration
+## PostgreSQL configuration
 
 This adapter supports the following list of options:
 
