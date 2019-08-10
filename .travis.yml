@@ -1,8 +1,8 @@
 language: elixir
 elixir:
-  - 1.8.0
+  - 1.8
 otp_release:
-  - 21.2.6
+  - 21.3
 services:
   - postgresql
 env:
