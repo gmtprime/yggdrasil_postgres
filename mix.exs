@@ -1,7 +1,7 @@
 defmodule YggdrasilPostgres.MixProject do
   use Mix.Project
 
-  @version "5.0.0"
+  @version "5.0.1"
   @root "https://github.com/gmtprime/yggdrasil_postgres"
 
   def project do
@@ -31,9 +31,9 @@ defmodule YggdrasilPostgres.MixProject do
   defp deps do
     [
       {:yggdrasil, "~> 5.0"},
-      {:postgrex, "~> 0.14"},
-      {:ex_doc, "~> 0.20", only: :dev},
-      {:credo, "~> 1.0", only: :dev}
+      {:postgrex, "~> 0.15"},
+      {:ex_doc, "~> 0.21", only: :dev},
+      {:credo, "~> 1.1", only: :dev}
     ]
   end
 

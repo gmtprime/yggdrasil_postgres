@@ -7,8 +7,7 @@
 - It's easy to use and configure.
 - It's fault tolerant: recovers disconnected subscriptions.
 - It has reconnection support: configurable exponential backoff.
-- It has OS environment variable configuration support (useful for
-[Distillery](https://github.com/bitwalker/distillery) releases).
+- It has OS environment variable configuration support (useful for releases).
 
 ## Small example
 
