@@ -11,7 +11,8 @@ defmodule Yggdrasil.Postgres.Connection.Generator do
   Starts a connection pool generator.
   """
   @spec start_link() :: Supervisor.on_start()
-  @spec start_link(DynamicSupervisor.options()) :: Supervisor.on_start()
+  @spec start_link([DynamicSupervisor.option() | DynamicSupervisor.init_option()]) ::
+          Supervisor.on_start()
   def start_link(options \\ []) do
     DynamicSupervisor.start_link(__MODULE__, nil, options)
   end
@@ -35,9 +36,10 @@ defmodule Yggdrasil.Postgres.Connection.Generator do
   def get_connection(tag, namespace)
 
   def get_connection(tag, namespace) do
-    with {:ok, _} <- connect(__MODULE__, tag, namespace) do
-      Pool.get_connection(tag, namespace)
-    else
+    case connect(__MODULE__, tag, namespace) do
+      {:ok, _} ->
+        Pool.get_connection(tag, namespace)
+
       {:error, {:already_started, _}} ->
         Pool.get_connection(tag, namespace)
 

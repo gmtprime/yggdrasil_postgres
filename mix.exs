@@ -1,7 +1,7 @@
 defmodule YggdrasilPostgres.MixProject do
   use Mix.Project
 
-  @version "5.0.1"
+  @version "5.0.2"
   @root "https://github.com/gmtprime/yggdrasil_postgres"
 
   def project do
@@ -31,9 +31,11 @@ defmodule YggdrasilPostgres.MixProject do
   defp deps do
     [
       {:yggdrasil, "~> 5.0"},
+      {:skogsra, "~> 2.2"},
       {:postgrex, "~> 0.15"},
-      {:ex_doc, "~> 0.21", only: :dev},
-      {:credo, "~> 1.1", only: :dev}
+      {:ex_doc, "~> 0.21", only: :dev, runtime: false},
+      {:credo, "~> 1.2", only: :dev, runtime: false},
+      {:dialyxir, "~> 1.0.0-rc.7", only: :dev, runtime: false}
     ]
   end
 
@@ -43,10 +45,11 @@ defmodule YggdrasilPostgres.MixProject do
   defp package do
     [
       description: "PostgreSQL adapter for Yggdrasil (pub/sub)",
-      files: ["lib", "mix.exs", "README.md", ".formatter.exs"],
+      files: ["lib", "mix.exs", "README.md", "CHANGELOG.md"],
       maintainers: ["Alexander de Sousa"],
       licenses: ["MIT"],
       links: %{
+        "Changelog" => "#{@root}/blob/master/CHANGELOG.md",
         "Github" => @root
       }
     ]

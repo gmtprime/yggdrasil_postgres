@@ -19,7 +19,7 @@ defmodule Yggdrasil.Postgres.Connection.Pool do
   @spec start_link(
           Connection.tag(),
           Connection.namespace(),
-          Supervisor.options()
+          [Supervisor.option() | Supervisor.init_option()]
         ) :: Supervisor.on_start()
   def start_link(tag, namespace, options \\ [])
 
@@ -67,7 +67,7 @@ defmodule Yggdrasil.Postgres.Connection.Pool do
     ]
 
     children = [
-      :poolboy.child_spec(name, pool_args, %{tag: tag, namespace: namespace})
+      :poolboy.child_spec(name, pool_args, tag: tag, namespace: namespace)
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
@@ -84,11 +84,16 @@ defmodule Yggdrasil.Postgres.Connection.Pool do
 
   ##
   # Gets pool size depending on the tag and namespace.
+  @spec get_pool_size(Connection.tag(), Connection.namespace()) :: integer()
+  defp get_pool_size(tag, namespace)
+
   defp get_pool_size(:subscriber, namespace) do
-    Settings.subscriber_connections!(namespace)
+    {:ok, size} = Settings.subscriber_connections(namespace)
+    size
   end
 
   defp get_pool_size(:publisher, namespace) do
-    Settings.publisher_connections!(namespace)
+    {:ok, size} = Settings.publisher_connections(namespace)
+    size
   end
 end

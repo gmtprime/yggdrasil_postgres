@@ -108,7 +108,8 @@ defmodule Yggdrasil.Publisher.Adapter.Postgres do
   defp send_message(namespace, %Channel{name: name} = channel, message) do
     with {:ok, encoded} <- Transformer.encode(channel, message),
          {:ok, conn} <- ConnectionGen.get_connection(:publisher, namespace),
-         {:ok, _} <- Postgrex.query(conn, "NOTIFY #{name}, '#{encoded}'", []) do
+         params = [name, encoded],
+         {:ok, _} <- Postgrex.query(conn, "SELECT pg_notify($1, $2)", params) do
       :ok
     end
   end

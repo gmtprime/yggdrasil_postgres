@@ -13,7 +13,7 @@ defmodule Yggdrasil.Postgres.ConnectionTest do
       assert :ok = Connection.subscribe(tag, namespace)
       assert_receive {:Y_CONNECTED, _}
 
-      config = %{tag: tag, namespace: namespace}
+      config = [tag: tag, namespace: namespace]
       assert {:ok, conn} = Connection.start_link(config)
       assert_receive {:Y_EVENT, _, :backing_off}, 5000
       {:ok, [tag: tag, namespace: namespace, conn: conn]}
@@ -44,7 +44,7 @@ defmodule Yggdrasil.Postgres.ConnectionTest do
 
   describe "when PostgreSQL is reachable and it's subscriber" do
     setup do
-      config = %{tag: :subscriber, namespace: nil}
+      config = [tag: :subscriber, namespace: nil]
       assert {:ok, conn} = Connection.start_link(config)
 
       {:ok, [conn: conn]}
@@ -61,7 +61,7 @@ defmodule Yggdrasil.Postgres.ConnectionTest do
 
   describe "when PostgreSQL is reachable and it's a publisher" do
     setup do
-      config = %{tag: :publisher, namespace: nil}
+      config = [tag: :publisher, namespace: nil]
       assert {:ok, conn} = Connection.start_link(config)
 
       {:ok, [conn: conn]}
@@ -86,13 +86,13 @@ defmodule Yggdrasil.Postgres.ConnectionTest do
     end
 
     test "when unreachable, cannot get connection", %{namespace: namespace} do
-      config = %{tag: :subscriber, namespace: namespace}
+      config = [tag: :subscriber, namespace: namespace]
       assert {:ok, conn} = Connection.start_link(config)
       assert {:error, _} = Connection.get(conn)
     end
 
     test "when reachable, can get connection" do
-      config = %{tag: :subscriber, namespace: nil}
+      config = [tag: :subscriber, namespace: nil]
       assert {:ok, conn} = Connection.start_link(config)
       assert {:ok, conn} = Connection.get(conn)
       assert is_pid(conn) and Process.alive?(conn)

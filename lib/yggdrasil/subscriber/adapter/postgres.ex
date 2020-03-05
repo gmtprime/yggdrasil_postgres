@@ -44,8 +44,8 @@ defmodule Yggdrasil.Subscriber.Adapter.Postgres do
   alias Yggdrasil.Channel
   alias Yggdrasil.Postgres.Connection
   alias Yggdrasil.Postgres.Connection.Generator, as: ConnectionGen
-  alias Yggdrasil.Subscriber.Publisher
   alias Yggdrasil.Subscriber.Manager
+  alias Yggdrasil.Subscriber.Publisher
 
   defstruct [:channel, :conn, :ref]
   alias __MODULE__, as: State
@@ -53,7 +53,7 @@ defmodule Yggdrasil.Subscriber.Adapter.Postgres do
   @typedoc false
   @type t :: %State{
           channel: channel :: Channel.t(),
-          conn: conn :: pid(),
+          conn: conn :: nil | pid(),
           ref: ref :: reference()
         }
 
@@ -86,9 +86,10 @@ defmodule Yggdrasil.Subscriber.Adapter.Postgres do
   end
 
   def handle_continue(:connect, %State{} = state) do
-    with {:ok, new_state} <- connect(state) do
-      {:noreply, new_state}
-    else
+    case connect(state) do
+      {:ok, new_state} ->
+        {:noreply, new_state}
+
       error ->
         {:noreply, state, {:continue, {:backoff, error}}}
     end

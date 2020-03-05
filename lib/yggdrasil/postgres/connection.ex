@@ -32,7 +32,7 @@ defmodule Yggdrasil.Postgres.Connection do
   @type t :: %State{
           namespace: namespace :: namespace(),
           tag: tag :: tag(),
-          conn: connection :: pid(),
+          conn: connection :: nil | pid(),
           retries: retries :: non_neg_integer(),
           backoff: backoff :: non_neg_integer()
         }
@@ -44,11 +44,14 @@ defmodule Yggdrasil.Postgres.Connection do
   Starts a PostgreSQL connection with a `tag` and `namespace` for the
   configuration. Additionally, it receives `GenServer` `options`.
   """
-  @spec start_link(map()) :: GenServer.on_start()
-  @spec start_link(map(), GenServer.options()) :: GenServer.on_start()
+  @spec start_link(keyword()) :: GenServer.on_start()
+  @spec start_link(keyword(), GenServer.options()) :: GenServer.on_start()
   def start_link(config, options \\ [])
 
-  def start_link(%{tag: tag, namespace: namespace}, options) do
+  def start_link(params, options) do
+    tag = params[:tag]
+    namespace = params[:namespace]
+
     GenServer.start_link(__MODULE__, [tag, namespace], options)
   end
 
@@ -95,9 +98,10 @@ defmodule Yggdrasil.Postgres.Connection do
 
   @impl true
   def handle_continue(:connect, %State{} = state) do
-    with {:ok, new_state} <- connect(state) do
-      {:noreply, new_state}
-    else
+    case connect(state) do
+      {:ok, new_state} ->
+        {:noreply, new_state}
+
       error ->
         {:noreply, state, {:continue, {:backoff, error}}}
     end
