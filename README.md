@@ -155,7 +155,7 @@ available hex package to your `mix.exs` file e.g:
 
 ```elixir
 def deps do
-  [{:yggdrasil_postgres, "~> 5.0"}]
+  [{:yggdrasil_postgres, "~> 6.0"}]
 end
 ```
 
