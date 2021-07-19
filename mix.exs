@@ -1,7 +1,7 @@
 defmodule YggdrasilPostgres.MixProject do
   use Mix.Project
 
-  @version "5.0.2"
+  @version "6.0.0"
   @root "https://github.com/gmtprime/yggdrasil_postgres"
 
   def project do
@@ -9,9 +9,10 @@ defmodule YggdrasilPostgres.MixProject do
       name: "Yggdrasil for PostgreSQL",
       app: :yggdrasil_postgres,
       version: @version,
-      elixir: "~> 1.8",
+      elixir: "~> 1.12",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
+      dialyzer: dialyzer(),
       package: package(),
       deps: deps(),
       docs: docs()
@@ -30,12 +31,18 @@ defmodule YggdrasilPostgres.MixProject do
 
   defp deps do
     [
-      {:yggdrasil, "~> 5.0"},
-      {:skogsra, "~> 2.2"},
+      {:yggdrasil, "~> 6.0"},
+      {:skogsra, "~> 2.3"},
       {:postgrex, "~> 0.15"},
-      {:ex_doc, "~> 0.21", only: :dev, runtime: false},
-      {:credo, "~> 1.2", only: :dev, runtime: false},
-      {:dialyxir, "~> 1.0.0-rc.7", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.24", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.1", only: [:dev, :test], runtime: false}
+    ]
+  end
+
+  def dialyzer do
+    [
+      plt_file: {:no_warn, "priv/plts/yggdrasil_postgres.plt"}
     ]
   end
 
@@ -60,12 +67,14 @@ defmodule YggdrasilPostgres.MixProject do
 
   defp docs do
     [
+      main: "readme",
       source_url: @root,
       source_ref: "v#{@version}",
-      main: "readme",
-      formatters: ["html"],
-      groups_for_modules: groups_for_modules(),
-      extras: ["README.md"]
+      extras: [
+        "README.md",
+        "CHANGELOG.md"
+      ],
+      groups_for_modules: groups_for_modules()
     ]
   end
 

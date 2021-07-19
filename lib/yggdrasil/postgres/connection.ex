@@ -7,7 +7,7 @@ defmodule Yggdrasil.Postgres.Connection do
 
   require Logger
 
-  alias Yggdrasil.Settings.Postgres, as: Settings
+  alias Yggdrasil.Config.Postgres, as: Config
 
   @typedoc """
   Connection types.
@@ -192,11 +192,11 @@ defmodule Yggdrasil.Postgres.Connection do
   @spec postgres_options(t()) :: Keyword.t()
   def postgres_options(%State{namespace: namespace}) do
     [
-      hostname: Settings.hostname!(namespace),
-      port: Settings.port!(namespace),
-      username: Settings.username!(namespace),
-      password: Settings.password!(namespace),
-      database: Settings.database!(namespace)
+      hostname: Config.hostname!(namespace),
+      port: Config.port!(namespace),
+      username: Config.username!(namespace),
+      password: Config.password!(namespace),
+      database: Config.database!(namespace)
     ]
   end
 
@@ -205,8 +205,8 @@ defmodule Yggdrasil.Postgres.Connection do
   def backoff(error, state)
 
   def backoff(error, %State{namespace: namespace, retries: retries} = state) do
-    max_retries = Settings.max_retries!(namespace)
-    slot_size = Settings.slot_size!(namespace)
+    max_retries = Config.max_retries!(namespace)
+    slot_size = Config.slot_size!(namespace)
 
     new_backoff = (2 <<< retries) * Enum.random(1..slot_size) * 1000
     Process.send_after(self(), {:timeout, {:continue, :connect}}, new_backoff)

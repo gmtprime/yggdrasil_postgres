@@ -4,8 +4,8 @@ defmodule Yggdrasil.Postgres.Connection.Pool do
   """
   use Supervisor
 
+  alias Yggdrasil.Config.Postgres, as: Config
   alias Yggdrasil.Postgres.Connection
-  alias Yggdrasil.Settings.Postgres, as: Settings
 
   ############
   # Public API
@@ -88,12 +88,12 @@ defmodule Yggdrasil.Postgres.Connection.Pool do
   defp get_pool_size(tag, namespace)
 
   defp get_pool_size(:subscriber, namespace) do
-    {:ok, size} = Settings.subscriber_connections(namespace)
+    {:ok, size} = Config.subscriber_connections(namespace)
     size
   end
 
   defp get_pool_size(:publisher, namespace) do
-    {:ok, size} = Settings.publisher_connections(namespace)
+    {:ok, size} = Config.publisher_connections(namespace)
     size
   end
 end
